@@ -1,6 +1,7 @@
 /* 
     gameData.js
-    Сценарии, события и тексты решений.
+    База данных: Сценарии, События, Решения.
+    Версия 2.0 (С обучением, кризисами и мобильным балансом)
 */
 
 const GAME_DATA = {
@@ -16,56 +17,56 @@ const GAME_DATA = {
                 reserves: 468,
                 gdp: 1.5,
                 oil: 60,
-                isFreeFloat: true, // В 2019 курс уже плавающий
+                isFreeFloat: true,
                 capitalControls: false
             },
             rounds: [
                 {
                     date: "Январь 2019",
-                    briefing: "НДС повышен до 20%. Это разогнало инфляцию до 5%. Ваша цель — вернуть её к 4%, не задушив рост.",
+                    briefing: "🎓 ОБУЧЕНИЕ: Инфляция 5.0% (цель 4%). Цены растут из-за налогов.\n\nСОВЕТ: Чтобы сбить цены, деньги должны стать «дороже». Попробуй сохранить высокую ставку или даже поднять её.",
                     shocks: { inflation: 0.1, usd: 0, gdp: 0 },
                     choices: ["raise025", "hold", "cut025", "verbal_hawkish"]
                 },
                 {
                     date: "Март 2019",
-                    briefing: "Инфляция стабилизировалась. Рубль крепнет вслед за нефтью. Рынок ждет сигнала.",
+                    briefing: "🎓 ОБУЧЕНИЕ: Инфляция остановилась. Рубль стабилен.\n\nСОВЕТ: Резкие движения сейчас не нужны. Можно просто наблюдать (Сохранить ставку) или дать сигнал рынку словами.",
                     shocks: { inflation: 0, usd: -1.0, gdp: 0 },
-                    choices: ["hold", "cut025", "verbal_dovish", "intervention_buy"] // Покупка валюты в резервы
+                    choices: ["hold", "cut025", "verbal_dovish", "intervention_buy"]
                 },
                 {
                     date: "Май 2019",
-                    briefing: "Инфляция замедляется быстрее прогноза. Риск дефляции (падения цен), что вредно для ВВП.",
+                    briefing: "Инфляция замедляется быстрее прогноза. Есть риск, что экономика слишком охладится. Пора думать о снижении ставки.",
                     shocks: { inflation: -0.2, usd: -0.5, gdp: 0.1 },
                     choices: ["cut025", "cut050", "hold", "intervention_buy"]
                 },
                 {
                     date: "Июль 2019",
-                    briefing: "ФРС США снижает ставку. Это дает нам пространство для маневра. Можно снижать смелее.",
+                    briefing: "ФРС США снижает ставку. Это дает нам пространство для маневра. Можно снижать смелее, чтобы поддержать ВВП.",
                     shocks: { inflation: -0.1, usd: -0.5, gdp: 0 },
                     choices: ["cut025", "cut050", "hold", "verbal_dovish"]
                 },
                 {
                     date: "Август 2019",
-                    briefing: "Торговая война США и Китая. Нефть падает. Рубль слабеет. Инфляция около 4.3%.",
+                    briefing: "Торговая война США и Китая. Нефть падает. Рубль слабеет. Бизнес жалуется на дорогие кредиты.",
                     shocks: { inflation: 0.1, usd: 2.0, gdp: -0.1 },
-                    pressure: "Бизнес: «Ставка слишком высокая, кредиты душат!»",
+                    pressure: "Бизнес: «Ставка слишком высокая, нам не на что развиваться!»",
                     choices: ["hold", "cut025", "verbal_hawkish", "intervention_sell"]
                 },
                 {
                     date: "Сентябрь 2019",
-                    briefing: "Инфляция упала до 4.0%. Мы у цели! Но экономика растет вяло (+0.9%).",
+                    briefing: "Инфляция упала до 4.0%. Мы у цели! Но экономика растет вяло (+0.9%). Нужно искать баланс.",
                     shocks: { inflation: -0.1, usd: 0.5, gdp: 0 },
                     choices: ["cut025", "cut050", "hold", "verbal_dovish"]
                 },
                 {
                     date: "Октябрь 2019",
-                    briefing: "Инфляция 3.8% (ниже цели). Реальная ставка (Ставка - Инфляция) слишком высока.",
+                    briefing: "Инфляция 3.8% (ниже цели). Реальная ставка (Ставка минус Инфляция) слишком высока. Это душит спрос.",
                     shocks: { inflation: -0.2, usd: 0, gdp: 0 },
                     choices: ["cut050", "cut025", "hold", "verbal_dovish"]
                 },
                 {
                     date: "Ноябрь 2019",
-                    briefing: "Конец года. Инфляция 3.5%. Мы рискуем 'пережать' экономику. Нужно стимулировать спрос.",
+                    briefing: "Конец года. Инфляция 3.5%. Мы рискуем 'пережать' экономику. Нужно стимулировать спрос дешевыми деньгами.",
                     shocks: { inflation: -0.2, usd: -0.5, gdp: 0.1 },
                     choices: ["cut050", "cut025", "hold", "intervention_buy"]
                 },
@@ -79,7 +80,7 @@ const GAME_DATA = {
                     date: "Итоги 2019",
                     briefing: "Год завершен. Сравним ваши результаты с историей.",
                     shocks: { inflation: 0, usd: 0, gdp: 0 },
-                    choices: ["hold", "hold", "hold", "hold"] // Формальный раунд
+                    choices: ["hold", "hold", "hold", "hold"]
                 }
             ],
             final: {
@@ -99,7 +100,7 @@ const GAME_DATA = {
                 reserves: 510,
                 gdp: 0.6,
                 oil: 105,
-                isFreeFloat: false, // Курс управляется (валютный коридор)
+                isFreeFloat: false, // Валютный коридор
                 capitalControls: false
             },
             rounds: [
@@ -107,7 +108,7 @@ const GAME_DATA = {
                     date: "Январь 2014",
                     briefing: "Нефть $105. Всё спокойно. ЦБ держит курс в валютном коридоре, продавая понемногу валюту.",
                     shocks: { inflation: 0, usd: 0.5, gdp: 0 },
-                    passiveDrain: 2, // Тратим $2 млрд просто так
+                    passiveDrain: 2, // Пассивный отток резервов
                     choices: ["hold", "raise025", "intervention_sell", "verbal_hawkish"]
                 },
                 {
@@ -126,10 +127,11 @@ const GAME_DATA = {
                 },
                 {
                     date: "Сентябрь 2014",
-                    briefing: "НАЧАЛОСЬ. Нефть рухнула до $90. Санкции закрыли доступ к западным кредитам. Рубль падает.",
+                    briefing: "Рынок падает. Нефть рухнула до $90. Санкции закрыли доступ к кредитам. Рубль под ударом.",
                     shocks: { inflation: 0.3, usd: 3.0, gdp: -0.2 },
-                    passiveDrain: 15, // Отток усиливается
-                    pressure: "Рынок: «ЦБ должен держать курс 38!»",
+                    passiveDrain: 15,
+                    urgent: true, // Красная панель
+                    pressure: "Рынок: «ЦБ должен держать курс 38 любой ценой!»",
                     choices: ["intervention_sell_large", "raise050", "free_float", "hold"]
                 },
                 {
@@ -142,7 +144,7 @@ const GAME_DATA = {
                 },
                 {
                     date: "Ноябрь 2014",
-                    briefing: "Нефть $75. Спекулянты атакуют рубль, зная, что мы продаем валюту. Либо сдаемся, либо теряем резервы.",
+                    briefing: "Нефть $75. Спекулянты атакуют рубль, зная, что мы продаем валюту. Либо сдаемся (Free Float), либо теряем резервы.",
                     shocks: { inflation: 0.8, usd: 5.0, gdp: -0.4 },
                     passiveDrain: 30,
                     choices: ["free_float", "intervention_sell_large", "raise100", "capital_controls"]
@@ -152,6 +154,7 @@ const GAME_DATA = {
                     briefing: "Нефть $60. Паника. Население штурмует обменники. Курс летит в космос.",
                     shocks: { inflation: 1.0, usd: 10.0, gdp: -0.5 },
                     passiveDrain: 20,
+                    urgent: true,
                     choices: ["raise100", "raise200", "intervention_sell", "verbal_hawkish"]
                 },
                 {
@@ -159,6 +162,7 @@ const GAME_DATA = {
                     briefing: "«ЧЕРНЫЙ ВТОРНИК». Курс на бирже достигал 80. Нужны экстренные меры, иначе банковская система рухнет.",
                     shocks: { inflation: 2.0, usd: 15.0, gdp: -1.0 },
                     passiveDrain: 10,
+                    urgent: true,
                     choices: ["raise_emergency", "capital_controls", "intervention_sell_large", "hold"]
                 },
                 {
@@ -215,6 +219,7 @@ const GAME_DATA = {
                     briefing: "САНКЦИИ. Половина резервов ЦБ ($300 млрд) заморожена Западом. Интервенции невозможны. Курс 100+. Банкоматы пустеют.",
                     shocks: { inflation: 2.0, usd: 30.0, gdp: -2.0 },
                     frozenReserves: true, // Блокировка кнопки продажи валюты
+                    urgent: true,
                     choices: ["raise_emergency_20", "capital_controls", "verbal_hawkish", "hold"]
                 },
                 {
@@ -246,12 +251,13 @@ const GAME_DATA = {
                     date: "Август 2022",
                     briefing: "Ситуация выравнивается. Курс 60. Ставка 8%. Экономика падает меньше, чем ожидали.",
                     shocks: { inflation: -0.1, usd: 2.0, gdp: 0.2 },
-                    choices: ["cut050", "hold", "verbal_dovish", "intervention_buy"] // Покупка в юанях возможна
+                    choices: ["cut050", "hold", "verbal_dovish", "intervention_buy"]
                 },
                 {
                     date: "Сентябрь 2022",
                     briefing: "Частичная мобилизация. Новая волна тревожности. Отток денег населения.",
                     shocks: { inflation: 0.2, usd: 3.0, gdp: -0.2 },
+                    urgent: true,
                     choices: ["hold", "verbal_hawkish", "intervention_sell", "print_money"]
                 },
                 {
@@ -287,25 +293,25 @@ const GAME_DATA = {
         "raise050": { text: "Повысить ставку +0.50%", type: "rate", val: 0.50, desc: "Сигнал рынку." },
         "raise100": { text: "Повысить ставку +1.00%", type: "rate", val: 1.00, desc: "Борьба с инфляцией." },
         "raise200": { text: "Повысить ставку +2.00%", type: "rate", val: 2.00, desc: "Жесткая мера." },
-        "raise_emergency": { text: "ЭКСТРЕННО: до 17%", type: "rate", val: 9.5, desc: "Остановить панику любой ценой." },
-        "raise_emergency_20": { text: "ЭКСТРЕННО: до 20%", type: "rate", val: 10.5, desc: "Спасти банки от набега." },
+        "raise_emergency": { text: "ЭКСТРЕННО: до 17%", type: "rate", val: 9.5, desc: "Остановить панику." },
+        "raise_emergency_20": { text: "ЭКСТРЕННО: до 20%", type: "rate", val: 10.5, desc: "Спасти банки." },
         
         "cut025": { text: "Снизить ставку -0.25%", type: "rate", val: -0.25, desc: "Поддержка роста." },
         "cut050": { text: "Снизить ставку -0.50%", type: "rate", val: -0.50, desc: "Стимул для ВВП." },
         "cut100": { text: "Снизить ставку -1.00%", type: "rate", val: -1.00, desc: "Активное смягчение." },
-        "cut200": { text: "Снизить ставку -2.00%", type: "rate", val: -2.00, desc: "Быстрый возврат к норме." },
+        "cut200": { text: "Снизить ставку -2.00%", type: "rate", val: -2.00, desc: "Быстрый возврат." },
         "cut300": { text: "Снизить ставку -3.00%", type: "rate", val: -3.00, desc: "Агрессивное смягчение." },
 
         "intervention_sell": { text: "Продать валюту ($2 млрд)", type: "fx", val: -2, desc: "Поддержать рубль." },
         "intervention_sell_large": { text: "Продать валюту ($10 млрд)", type: "fx", val: -10, desc: "Удержать курс силой." },
-        "intervention_buy": { text: "Купить валюту ($2 млрд)", type: "fx", val: 2, desc: "Пополнить резервы, ослабить рубль." },
+        "intervention_buy": { text: "Купить валюту ($2 млрд)", type: "fx", val: 2, desc: "Пополнить резервы." },
         
-        "free_float": { text: "Отпустить рубль", type: "special", effect: "float", desc: "Прекратить тратить резервы." },
-        "capital_controls": { text: "Запрет на вывод валюты", type: "special", effect: "cap_on", desc: "Остановить отток капитала." },
-        "capital_controls_off": { text: "Снять ограничения", type: "special", effect: "cap_off", desc: "Вернуть свободу бизнесу." },
+        "free_float": { text: "Отпустить рубль", type: "special", effect: "float", desc: "Сберечь резервы." },
+        "capital_controls": { text: "Запрет на вывод валюты", type: "special", effect: "cap_on", desc: "Остановить отток." },
+        "capital_controls_off": { text: "Снять ограничения", type: "special", effect: "cap_off", desc: "Вернуть свободу." },
         "print_money": { text: "Печать денег (QE)", type: "special", effect: "print", desc: "Рост ВВП ценой инфляции." },
 
-        "verbal_hawkish": { text: "Жесткая риторика", type: "verbal", val: 1, desc: "Пообещать повышение ставки." },
-        "verbal_dovish": { text: "Мягкая риторика", type: "verbal", val: -1, desc: "Пообещать поддержку росту." }
+        "verbal_hawkish": { text: "Жесткая риторика", type: "verbal", val: 1, desc: "Пообещать повышение." },
+        "verbal_dovish": { text: "Мягкая риторика", type: "verbal", val: -1, desc: "Пообещать поддержку." }
     }
 };

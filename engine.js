@@ -1,6 +1,7 @@
 /* 
     engine.js
-    Логика игры, математика и управление интерфейсом.
+    Движок игры: Логика, Математика, UI.
+    Версия 2.0
 */
 
 const GameEngine = {
@@ -15,17 +16,56 @@ const GameEngine = {
             capitalControls: false,
             reservesFrozen: false
         },
-        score: { hawk: 0, dove: 0, market: 0, statist: 0 }
+        score: { hawk: 0, dove: 0, market: 0, statist: 0 },
+        // Для обучения
+        currentSlide: 1
     },
     chart: null,
 
-    // --- Навигация ---
+    // --- ОНБОРДИНГ (МОДАЛЬНОЕ ОКНО) ---
+    
+    showOnboarding() {
+        document.getElementById('modal-onboarding').classList.remove('hidden');
+        this.state.currentSlide = 1;
+        this.updateSlideUI();
+    },
+
+    hideOnboarding() {
+        document.getElementById('modal-onboarding').classList.add('hidden');
+    },
+
+    nextSlide() {
+        // Скрываем текущий
+        document.getElementById(`slide-${this.state.currentSlide}`).classList.add('hidden');
+        this.state.currentSlide++;
+        
+        // Проверяем, есть ли следующий
+        const next = document.getElementById(`slide-${this.state.currentSlide}`);
+        if (next) {
+            next.classList.remove('hidden');
+            this.updateSlideUI();
+        } else {
+            this.hideOnboarding();
+        }
+    },
+
+    updateSlideUI() {
+        const btn = document.getElementById('btn-onb-next');
+        if (this.state.currentSlide === 3) {
+            btn.innerText = "Понятно, к делу! 🚀";
+        } else {
+            btn.innerText = "Далее →";
+        }
+    },
+
+    // --- НАВИГАЦИЯ ---
 
     startScenario(id) {
         document.getElementById('screen-menu').classList.add('hidden');
         document.getElementById('screen-scenario-end').classList.add('hidden');
         document.getElementById('screen-game').classList.remove('hidden');
         
+        // Инициализируем график только когда контейнер виден
         this.initChart();
         this.loadScenarioData(id);
     },
@@ -55,7 +95,7 @@ const GameEngine = {
         this.startRound();
     },
 
-    // --- Игровой цикл ---
+    // --- ИГРОВОЙ ЦИКЛ ---
 
     startRound() {
         const scenario = GAME_DATA.scenarios[this.state.scenarioId];
@@ -92,6 +132,7 @@ const GameEngine = {
         this.renderDecisions(round);
 
         document.getElementById('round-num').innerText = `${this.state.roundIdx + 1}/${scenario.roundsTotal}`;
+        document.getElementById('game-date').innerText = round.date;
     },
 
     applyShocks(shocks) {
@@ -110,9 +151,6 @@ const GameEngine = {
     applyNeutralRateLogic() {
         const i = this.state.indicators;
         // Нейтральная ставка грубо = Инфляция + 2%
-        // Если ставка выше -> давим инфляцию, давим ВВП
-        // Если ставка ниже -> разгоняем инфляцию, разгоняем ВВП
-        
         const realRate = i.rate - i.inflation;
         const neutralRealRate = 2.0; 
         const diff = realRate - neutralRealRate;
@@ -154,13 +192,13 @@ const GameEngine = {
             i.inflation += 2;
         }
         
-        // Ограничители
+        // Ограничители (чтобы не ушло в минус)
         if (i.inflation < 0.1) i.inflation = 0.1;
         if (i.reserves < 0) i.reserves = 0;
         if (i.rate < 0) i.rate = 0;
     },
 
-    // --- Решения ---
+    // --- РЕШЕНИЯ ---
 
     makeDecision(key) {
         const d = GAME_DATA.decisions[key];
@@ -170,7 +208,6 @@ const GameEngine = {
 
         // 1. Ставка
         if (d.type === "rate") {
-            const oldRate = i.rate;
             i.rate += d.val;
             
             // Профиль
@@ -184,9 +221,9 @@ const GameEngine = {
             this.state.lagQueue.push({ roundsLeft: 3, effect: { gdp: -delta * 0.15 } });
 
             if (delta === 0) {
-                comment = `Ставка сохранена (${i.rate}%). Текущая денежно-кредитная политика продолжает действовать на экономику.`;
+                comment = `Ставка сохранена (${i.rate}%). Текущая политика продолжает действовать.`;
             } else {
-                comment = `Ставка ${delta > 0 ? "повышена" : "снижена"} до ${i.rate}%. Это повлияет на инфляцию через 2 месяца.`;
+                comment = `Ставка ${delta > 0 ? "повышена" : "снижена"} до ${i.rate}%. Эффект на инфляцию будет через 2 месяца.`;
             }
         }
 
@@ -198,7 +235,7 @@ const GameEngine = {
 
             // Эффект мгновенный, но зависит от FreeFloat
             let multiplier = 0.5;
-            if (this.state.flags.isFreeFloat) multiplier = 0.8; // На тонком рынке влияние сильнее
+            if (this.state.flags.isFreeFloat) multiplier = 0.8; 
             
             const kursChange = vol * multiplier; 
             i.usd += kursChange;
@@ -247,7 +284,7 @@ const GameEngine = {
         this.showRoundResult(comment, changes);
     },
 
-    // --- UI Рендеринг ---
+    // --- UI РЕНДЕРИНГ ---
 
     updateDashboard() {
         const i = this.state.indicators;
@@ -272,8 +309,21 @@ const GameEngine = {
     },
 
     renderBriefing(round) {
-        document.getElementById('briefing-title').innerText = round.date;
         document.getElementById('briefing-text').innerText = round.briefing;
+        
+        // Логика Breaking News (Красная панель)
+        const panel = document.getElementById('briefing-panel');
+        const title = document.getElementById('briefing-title');
+        
+        if (round.urgent) {
+            panel.classList.add('urgent');
+            title.innerText = "⚡ МОЛНИЯ";
+            title.style.color = "var(--accent-red)";
+        } else {
+            panel.classList.remove('urgent');
+            title.innerText = "Событие";
+            title.style.color = "var(--text-main)";
+        }
         
         const pBox = document.getElementById('pressure-box');
         if (round.pressure) {
@@ -317,13 +367,15 @@ const GameEngine = {
             // Если резервы кончились -> нельзя продавать
             if (this.state.indicators.reserves < 5 && d.type === 'fx' && d.val < 0) disabled = true;
 
-            // Если уже FreeFloat -> кнопка FreeFloat не нужна (или неактивна)
+            // Если уже FreeFloat -> кнопка FreeFloat не нужна
             if (key === 'free_float' && this.state.flags.isFreeFloat) disabled = true;
 
             // Тумблер Capital Controls
-            if (key === 'capital_controls' && this.state.flags.capitalControls) {
-                // Если уже включено, не показываем кнопку включения (сценарий должен дать кнопку выключения)
-                disabled = true; 
+            if (key === 'capital_controls') {
+                if (this.state.flags.capitalControls) disabled = true; // Уже включено
+            }
+            if (key === 'capital_controls_off') {
+                if (!this.state.flags.capitalControls) disabled = true; // Уже выключено
             }
 
             if (disabled) btn.disabled = true;
@@ -373,7 +425,7 @@ const GameEngine = {
         document.getElementById('myth-debunk').innerText = scenario.final.mythDebunk;
     },
 
-    // --- График ---
+    // --- ГРАФИК ---
     initChart() {
         if (this.chart) this.chart.destroy();
         const ctx = document.getElementById('mainChart').getContext('2d');
@@ -411,7 +463,7 @@ const GameEngine = {
                     x: { grid: { color: 'rgba(255,255,255,0.05)' } },
                     y: { grid: { color: 'rgba(255,255,255,0.05)' } }
                 },
-                animation: false // Отключаем анимацию для быстродействия
+                animation: false
             }
         });
     },
@@ -468,7 +520,7 @@ const GameEngine = {
         this.chart.update();
     },
 
-    // --- Модалка ---
+    // --- МОДАЛКИ ---
     showEducation() { document.getElementById('modal-education').classList.remove('hidden'); },
     hideEducation() { document.getElementById('modal-education').classList.add('hidden'); }
 };

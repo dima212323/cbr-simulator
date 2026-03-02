@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ЦБ: Правда или Миф</title>
     <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +24,7 @@
             --grid-line: rgba(90, 112, 144, 0.15);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         body {
             background-color: var(--bg-dark);
@@ -44,25 +44,28 @@
         
         /* Утилиты */
         .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Кнопки */
         .btn {
             background: transparent;
             border: 1px solid var(--accent-blue);
             color: var(--accent-blue);
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-family: 'IBM Plex Mono', monospace;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             text-transform: uppercase;
             font-size: 0.9rem;
+            border-radius: 4px;
         }
-        .btn:hover { background: var(--accent-blue); color: var(--bg-dark); box-shadow: 0 0 15px var(--accent-blue); }
+        .btn:hover { background: var(--accent-blue); color: var(--bg-dark); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+        .btn:active { transform: scale(0.98); }
         .btn-primary { background: var(--accent-blue); color: var(--bg-dark); }
-        .btn-icon { padding: 10px; font-size: 1.2rem; border: none; color: var(--text-muted); }
-        .btn-icon:hover { color: var(--accent-blue); background: transparent; box-shadow: none; }
+        .btn-icon { padding: 8px; font-size: 1.4rem; border: none; color: var(--text-muted); background: transparent; cursor: pointer; }
+        .btn-icon:hover { color: var(--text-main); }
 
         /* Экраны */
         .screen {
@@ -87,7 +90,8 @@
             gap: 20px;
             max-width: 1000px;
             width: 100%;
-            margin-top: 40px;
+            margin-top: 30px;
+            padding-bottom: 40px;
         }
         .scenario-card {
             background: var(--bg-panel);
@@ -98,8 +102,9 @@
             text-align: left;
             position: relative;
             overflow: hidden;
+            border-radius: 8px;
         }
-        .scenario-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
+        .scenario-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
         .scenario-card h3 { font-size: 1.8rem; margin-bottom: 10px; color: var(--accent-gold); }
         .scenario-card .tag { 
             display: inline-block; padding: 4px 8px; font-size: 0.7rem; 
@@ -123,6 +128,7 @@
             background: var(--bg-panel); 
             padding: 10px 20px; 
             border-bottom: 1px solid var(--text-muted); 
+            border-radius: 8px;
         }
 
         .chart-container { 
@@ -132,17 +138,20 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            border-radius: 8px;
         }
-        .chart-controls { display: flex; gap: 10px; margin-bottom: 10px; }
+        .chart-controls { display: flex; gap: 10px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; }
         .chart-btn { 
-            padding: 5px 10px; 
+            padding: 6px 12px; 
             border: 1px solid var(--text-muted); 
             color: var(--text-muted); 
             background: transparent; 
             cursor: pointer; 
             font-size: 0.8rem;
+            white-space: nowrap;
+            border-radius: 20px;
         }
-        .chart-btn.active { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .chart-btn.active { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(0, 229, 255, 0.1); }
 
         .briefing-panel {
             background: var(--bg-panel);
@@ -152,7 +161,17 @@
             flex-direction: column;
             gap: 15px;
             overflow-y: auto;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
+        /* Стиль для Срочных новостей */
+        .briefing-panel.urgent {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 15px rgba(255, 77, 109, 0.2) inset;
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border { 0% { border-color: var(--accent-red); } 50% { border-color: transparent; } 100% { border-color: var(--accent-red); } }
+
         .pressure-badge {
             background: rgba(255, 77, 109, 0.1);
             border: 1px solid var(--accent-red);
@@ -168,9 +187,7 @@
             font-weight: bold;
             text-align: center;
             border-radius: 4px;
-            animation: pulse 2s infinite;
         }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
         .controls-panel {
             grid-column: 1 / -1;
@@ -180,51 +197,55 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            border-radius: 8px;
         }
         .dashboard { display: flex; justify-content: space-between; gap: 10px; }
-        .dash-item { text-align: center; flex: 1; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 4px; }
-        .dash-label { font-size: 0.7rem; color: var(--text-muted); display: block; }
-        .dash-val { font-size: 1.2rem; font-weight: bold; }
+        .dash-item { text-align: center; flex: 1; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; }
+        .dash-label { font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 2px; }
+        .dash-val { font-size: 1.1rem; font-weight: bold; }
         
-        /* Сетка решений: теперь 4 слота */
+        /* Сетка решений: Адаптивная */
         .decisions-grid { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
-            gap: 15px; 
+            gap: 12px; 
         }
         .decision-btn {
-            padding: 15px;
+            padding: 12px;
             background: rgba(0, 229, 255, 0.05);
-            border: 1px solid var(--accent-blue);
+            border: 1px solid var(--text-muted);
             color: var(--text-main);
             cursor: pointer;
             text-align: left;
             transition: 0.2s;
             height: 100%;
+            min-height: 80px; /* Чтобы удобно попадать пальцем */
             display: flex;
             flex-direction: column;
             justify-content: center;
+            border-radius: 6px;
         }
-        .decision-btn:hover { background: rgba(0, 229, 255, 0.15); }
-        .decision-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #333; }
-        .decision-btn strong { display: block; color: var(--accent-blue); margin-bottom: 5px; font-size: 0.9rem; }
-        .decision-btn span { font-size: 0.75rem; color: var(--text-muted); }
+        .decision-btn:hover { background: rgba(0, 229, 255, 0.15); border-color: var(--accent-blue); }
+        .decision-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #333; background: transparent; }
+        .decision-btn strong { display: block; color: var(--accent-blue); margin-bottom: 4px; font-size: 0.9rem; }
+        .decision-btn span { font-size: 0.7rem; color: var(--text-muted); line-height: 1.2; }
         
-        .decision-btn.danger { border-color: var(--accent-red); }
+        .decision-btn.danger { border-color: rgba(255, 77, 109, 0.5); }
         .decision-btn.danger strong { color: var(--accent-red); }
         .decision-btn.active-toggle { background: var(--accent-blue); border-color: var(--accent-blue); }
         .decision-btn.active-toggle strong { color: #000; }
-        .decision-btn.active-toggle span { color: #333; }
+        .decision-btn.active-toggle span { color: #222; }
 
         /* Цвета индикаторов */
         .color-green { color: var(--accent-green); }
         .color-yellow { color: var(--accent-gold); }
         .color-red { color: var(--accent-red); }
 
-        /* Модальное окно (Образование) */
+        /* Модальные окна */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
             z-index: 200;
             display: flex; justify-content: center; align-items: center;
         }
@@ -236,6 +257,8 @@
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
         .resource-link {
             display: block;
@@ -265,12 +288,17 @@
 
         /* Мобильная адаптация */
         @media (max-width: 768px) {
-            .game-layout { display: flex; flex-direction: column; overflow-y: scroll; }
-            .chart-container { min-height: 250px; }
-            .dashboard { flex-wrap: wrap; }
-            .dash-item { min-width: 45%; }
-            .decisions-grid { grid-template-columns: 1fr; }
+            .game-layout { display: flex; flex-direction: column; overflow-y: scroll; padding-bottom: 20px; }
+            .chart-container { min-height: 250px; flex: none; }
+            .dashboard { flex-wrap: wrap; gap: 8px; }
+            .dash-item { min-width: 30%; padding: 5px; }
+            .dash-val { font-size: 1rem; }
+            
+            /* Кнопки плиткой 2x2 на мобильных */
+            .decisions-grid { grid-template-columns: 1fr 1fr; }
+            
             #screen-menu h1 { font-size: 3rem; }
+            .menu-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -278,8 +306,16 @@
 
     <!-- ЭКРАН 1: ГЛАВНОЕ МЕНЮ -->
     <div id="screen-menu" class="screen fade-in">
-        <h1 style="font-size: 4rem; color: var(--accent-blue); margin-bottom: 10px;">ЦБ: Правда или Миф</h1>
-        <p style="color: var(--text-muted); font-size: 1.2rem;">Симулятор Председателя Центрального Банка</p>
+        <div style="margin-top: 20px;">
+            <h1 style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 5px; line-height: 1;">ЦБ: Правда или Миф</h1>
+            <p style="color: var(--text-muted); font-size: 1rem;">Симулятор Председателя Центрального Банка</p>
+        </div>
+
+        <!-- Кнопки меню -->
+        <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; justify-content: center;">
+            <button class="btn" onclick="GameEngine.showOnboarding()">🎓 Как играть?</button>
+            <button class="btn" onclick="GameEngine.showEducation()">📚 Теория</button>
+        </div>
         
         <div class="menu-grid">
             <!-- 2019 -->
@@ -307,10 +343,6 @@
                 </p>
             </div>
         </div>
-
-        <div style="margin-top: 40px;">
-            <button class="btn" onclick="GameEngine.showEducation()">📚 Источники и Теория</button>
-        </div>
     </div>
 
     <!-- ЭКРАН 2: ИГРА -->
@@ -318,15 +350,16 @@
         <div class="game-layout">
             <!-- Шапка -->
             <div class="game-header">
-                <div>
+                <div style="display: flex; align-items: center;">
                     <button class="btn-icon" onclick="location.reload()" title="В меню">↩</button>
-                    <span id="scenario-title" class="mono" style="color: var(--accent-blue); margin-left: 10px;">Сценарий</span>
-                    <span style="margin: 0 10px; color: #333;">|</span>
-                    <span id="game-date" class="mono">Дата</span>
+                    <div style="margin-left: 10px; line-height: 1.2;">
+                        <div id="scenario-title" class="mono" style="color: var(--accent-blue); font-size: 0.8rem;">Сценарий</div>
+                        <div id="game-date" class="mono" style="font-weight: bold;">Дата</div>
+                    </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <button class="btn-icon" onclick="GameEngine.showEducation()">📚</button>
-                    <span class="mono" style="font-size: 0.8rem;">Раунд <span id="round-num">1</span></span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="GameEngine.showEducation()">?</button>
+                    <span class="mono" style="font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 4px;">Раунд <span id="round-num">1</span></span>
                 </div>
             </div>
 
@@ -344,7 +377,7 @@
             </div>
 
             <!-- Брифинг -->
-            <div class="briefing-panel">
+            <div id="briefing-panel" class="briefing-panel">
                 <h3 id="briefing-title" style="color: var(--text-main);">Событие</h3>
                 <p id="briefing-text" style="font-size: 0.95rem; line-height: 1.5; color: #ccc;">...</p>
                 
@@ -356,8 +389,8 @@
                     ⚡ МОМЕНТ ИСТИНЫ
                 </div>
 
-                <div id="alert-box" class="hidden" style="border-left: 3px solid var(--accent-red); padding-left: 10px; color: var(--accent-red);">
-                    <!-- Сюда пишутся алерты типа "Резервы исчерпаны" -->
+                <div id="alert-box" class="hidden" style="border-left: 3px solid var(--accent-red); padding-left: 10px; color: var(--accent-red); margin-top: 10px;">
+                    <!-- Алерты -->
                 </div>
             </div>
 
@@ -416,7 +449,7 @@
             <h1 style="color: var(--accent-gold); margin-bottom: 10px;">Сценарий завершен</h1>
             <h2 id="end-verdict" style="font-size: 2rem; margin-bottom: 30px;">Ваш профиль: ...</h2>
             
-            <div style="background: var(--bg-panel); padding: 20px; border: 1px solid var(--text-muted); margin-bottom: 30px;">
+            <div style="background: var(--bg-panel); padding: 20px; border: 1px solid var(--text-muted); margin-bottom: 30px; border-radius: 8px;">
                 <h3 style="color: var(--accent-blue); margin-bottom: 10px;">Разбор мифа</h3>
                 <p id="myth-debunk" style="line-height: 1.6; font-size: 1.1rem;">...</p>
             </div>
@@ -426,9 +459,54 @@
                 <p id="real-history" style="line-height: 1.6; color: var(--text-muted);">...</p>
             </div>
 
-            <div style="text-align: center; display: flex; gap: 20px; justify-content: center;">
+            <div style="text-align: center; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
                 <button class="btn btn-primary" onclick="location.reload()">В главное меню</button>
                 <button class="btn" onclick="GameEngine.showEducation()">Полезные материалы</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО: ОНБОРДИНГ (Как играть) -->
+    <div id="modal-onboarding" class="modal-overlay hidden">
+        <div class="modal-content fade-in" style="text-align: center;">
+            <div style="display: flex; justify-content: flex-end;">
+                <button class="btn-icon" onclick="GameEngine.hideOnboarding()">✕</button>
+            </div>
+
+            <!-- Слайд 1 -->
+            <div id="slide-1" class="onboarding-slide">
+                <div style="font-size: 4rem; margin-bottom: 20px;">🏦</div>
+                <h2 style="margin-bottom: 15px;">Ты — Главный банкир</h2>
+                <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.5;">
+                    Твоя подпись стоит на каждой купюре. Твоя задача — не дать ценам улететь в космос (инфляция) и не остановить заводы (ВВП).
+                </p>
+            </div>
+
+            <!-- Слайд 2 -->
+            <div id="slide-2" class="onboarding-slide hidden">
+                <div style="font-size: 4rem; margin-bottom: 20px;">🎛️</div>
+                <h2 style="margin-bottom: 15px;">Твой инструмент</h2>
+                <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.5;">
+                    <strong>Ключевая ставка</strong> — это тормоз и газ экономики.<br><br>
+                    📈 <strong>Поднимаешь ставку:</strong> Кредиты дорогие → Люди меньше тратят → Цены не растут.<br>
+                    📉 <strong>Снижаешь ставку:</strong> Кредиты дешевые → Бизнес растет → Но цены могут взлететь.
+                </p>
+            </div>
+
+            <!-- Слайд 3 -->
+            <div id="slide-3" class="onboarding-slide hidden">
+                <div style="font-size: 4rem; margin-bottom: 20px;">⚖️</div>
+                <h2 style="margin-bottom: 15px;">В чем подвох?</h2>
+                <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.5;">
+                    Ты не можешь сделать всем хорошо. <br>
+                    Если просто печатать деньги — получишь инфляцию как в 90-е.<br>
+                    Если зажмешь гайки слишком сильно — экономика встанет.<br>
+                    <strong>Ищи баланс!</strong>
+                </p>
+            </div>
+
+            <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center;">
+                <button id="btn-onb-next" class="btn btn-primary" onclick="GameEngine.nextSlide()">Далее →</button>
             </div>
         </div>
     </div>
